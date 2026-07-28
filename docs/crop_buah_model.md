@@ -1,32 +1,19 @@
-# Model Klasifikasi Buah Tropis - Crop Buah Tropis
+# Panduan Lengkap: Klasifikasi Buah Tropis dengan K-Nearest Neighbors (KNN)
 
-**Tujuan Pembelajaran:** 
-Memberikan wadah pelatihan pengolahan dataset klasifikasi multiclass kelas menengah yang mendemonstrasikan kompleksitas dataset riil di dunia industri. Berbeda dengan dataset statis pada modul pemula, dataset ini memiliki variabilitas alami (*noise*) kondisi iklim dan sifat kimiawi tanah untuk memproyeksikan presisi kecerdasan mutlak. Peserta akan ditantang menentukan 1 dari 4 pilihan kandidat varietas taksonomi famili botani buah-buahan endemik daerah tropis basah (Pisang, Mangga, Pepaya, Semangka) dengan tingkat akurasi model yang dipaksa mentok di 92-97%, memaksa peserta untuk membedah *Error Analysis* yang mendalam.
+Halo! Selamat datang di modul **Klasifikasi Buah Tropis**. Di sini, kita akan belajar Machine Learning dari nol, langkah demi langkah. Anggap saja dokumen ini sebagai "buku catatan" atau "papan tulis" kita selama sesi bootcamp. Bahasanya santai saja, tapi materi di dalamnya 100% menggunakan standar industri profesional.
 
-**Dataset:** Dataset Buah Tropis Sintetis Realistis (`crop_buah_tropis.csv`)
+**Apa tujuan kita di sini?**
+Kita akan mengajari komputer (mesin) agar bisa membedakan 4 jenis buah tropis: **Pisang, Mangga, Pepaya, dan Semangka**. Mesin akan menebak buah apa yang cocok ditanam berdasarkan 7 kondisi tanah dan lingkungan (seperti jumlah Nitrogen, suhu, curah hujan, dll).
 
----
+Karena ini kelas pemula, kita hanya akan fokus pada satu algoritma yang paling intuitif dan mudah dipahami, yaitu **K-Nearest Neighbors (KNN)**.
 
-## Table of Contents
-
-1. [Import Library](#1-import-library)
-2. [Data Loading & Initial Exploration](#2-data-loading--initial-exploration)
-3. [Exploratory Data Analysis (EDA)](#3-exploratory-data-analysis-eda)
-4. [Data Processing](#4-data-processing)
-5. [Data Splitting](#5-data-splitting)
-6. [Model Training](#6-model-training)
-7. [Model Evaluation - Classification Report & Confusion Matrix](#7-model-evaluation---classification-report--confusion-matrix)
-8. [Model Comparison (KP, CM, TP, FP, FN, TN)](#8-model-comparison-kp-cm-tp-fp-fn-tn)
-9. [Visualizing Model Performance](#9-visualizing-model-performance)
-10. [Best Model & Error Analysis](#10-best-model--error-analysis)
-11. [Menyimpan Model (Save Model)](#11-menyimpan-model-save-model)
-12. [Memuat Model dan Pengujian (Load Model & Testing)](#12-memuat-model-dan-pengujian-load-model--testing)
+Yuk, kita mulai perjalanannya!
 
 ---
 
-## 1. Import Library
+## 1. Import Library: Menyiapkan Alat Tempur
 
-Tahap inisialisasi modul Python yang mendasari manipulasi data tabular, komputasi numerik, pembuatan visualisasi matematis, klasifikasi kecerdasan buatan, serta instrumen ekspor-impor objek persisten.
+Sebelum membangun rumah, kita butuh alat-alat seperti palu dan gergaji. Di Python, "alat-alat" ini disebut *library*.
 
 ```python
 import os
@@ -38,10 +25,6 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (
     confusion_matrix, accuracy_score,
     precision_score, f1_score, recall_score,
@@ -49,414 +32,171 @@ from sklearn.metrics import (
 )
 ```
 
-**Penjelasan Konsep Kritis Analitik:**
-- `pandas` dan `numpy`: Fondasi operasi aljabar matriks dan manipulasi *DataFrame* berkinerja tinggi.
-- `matplotlib.pyplot` dan `seaborn`: Mesin penderet grafik visual untuk mentransformasikan ribuan angka ke dalam geometri pola persepsi visual.
-- `joblib`: Menangani serialisasi (konversi objek python ke susunan *byte* memori disk) agar model algoritma bisa disimpan dan didistribusikan.
-- `sklearn` (Scikit-Learn): Penyedia instrumen Machine Learning. Modul buah tropis ini memperkenalkan fungsi standardisasi distribusi kurva lonceng normal `StandardScaler` dan memfokuskan pilar matematis probabilistik murni `GaussianNB` (Naive Bayes).
+**Penjelasan Santai:**
+- **`pandas`**: Ini ibarat Microsoft Excel versi coding. Fungsinya untuk membaca data kita yang berbentuk tabel baris dan kolom.
+- **`numpy`**: Alat kalkulator super cepat untuk menghitung rumus-rumus matematika di balik layar.
+- **`matplotlib` & `seaborn`**: Kuas dan kanvas kita. Kita pakai ini untuk menggambar grafik berwarna-warni biar datanya enak dilihat (visualisasi).
+- **`sklearn` (Scikit-Learn)**: Ini kotak ajaib yang berisi rumus-rumus Machine Learning. Kita ambil model `KNeighborsClassifier` dari sini.
+- **`joblib`**: Alat pembeku. Kalau model kita sudah pintar, kita bekukan pakai joblib agar bisa dipakai lagi besok-besok tanpa harus mengajari dari awal.
 
 ---
 
-## 2. Data Loading & Initial Exploration
+## 2. Kenalan dengan Data (Data Loading)
 
-Langkah pemuatan arsitektur matriks tabel ke dalam Random Access Memory (RAM) untuk ditelaah secara statistik deskriptif sebelum diumpankan ke permesinan algoritma ML.
+Tahap pertama adalah memanggil data kita ke dalam program. Datanya berbentuk file Excel/CSV bernama `crop_buah_tropis.csv`.
 
 ```python
 data = pd.read_csv("../dataset/crop_buah_tropis.csv")
 data.head()
 ```
 
-### Cek Informasi Dataset
+Dataset ini punya **2.400 baris** (sampel tanah) dan **8 kolom** (7 kolom lingkungan + 1 kolom nama buah). 
 
-```python
-print(f"Dataset shape: {data.shape}")
-data.info()
-```
-
-### Describe Statistik
-
-```python
-data.describe(include='all')
-```
-
-### Cek Missing Values & Duplikat
-
-```python
-print("Missing values:", data.isnull().sum().sum())
-print("Duplikat:", data.duplicated().sum())
-```
-
-### Cek Distribusi Label
-
-```python
-print(data['label'].value_counts())
-```
-
-**Penjelasan Analisa Tahapan Konsep Murni:**
-- Matriks dataset berdimensi $2400 \times 8$ (2400 baris sampel observasi independen dan 8 kolom matriks).
-- Proporsi sebaran data diatur agar terdistribusi merata sempurna (*uniform distribution*), yakni 600 sampel per ras varietas (Banana, Mango, Papaya, Watermelon).
-- **Variansi dan Noise Alami:** Dataset buatan ini secara matematis diinjeksi dengan deviasi *noise*. Rentang kelembaban, pH tanah, atau curah hujan sengaja direkayasa agar titik persebaran batas kelasnya saling tumpang tindih (*overlapping bounds*). Kondisi empiris ini mencegah model mencapai akurasi $100\%$ dan menciptakan *blind spot* (titik buta) alami yang dapat memicu *False Positives* dan *False Negatives*.
+Penting untuk mengecek dua hal di awal:
+1. **Missing Values**: Ada sel yang kosong tidak? (Kalau kosong, harus kita isi atau buang).
+2. **Keseimbangan Kelas**: Apakah jumlah sampel Mangga dan Semangka sama rata? (Penting! Kalau mesin cuma sering lihat Mangga, nanti dia jadi bias dan menebak semuanya Mangga). Di dataset ini, setiap buah punya tepat 600 sampel. Sangat seimbang!
 
 ---
 
-## 3. Exploratory Data Analysis (EDA)
+## 3. Exploratory Data Analysis (EDA): Melihat "Wajah" Data
 
-Analisis geometri data menggunakan perpaduan *Descriptive Statistics* dan perwujudan plot visual multivariat.
+EDA itu ibarat detektif yang sedang mengamati tempat kejadian perkara. Kita lihat data dari berbagai sudut pakai grafik. Tujuannya? Biar kita "kenal" sifat asli data kita sebelum disuruh masuk ke mesin ML.
 
-### 3.1 Distribusi Fitur Numerik (Histogram Grid 3x3)
+### A. Histogram: Melihat Sebaran Data
+Histogram melihat kemana data paling banyak berkumpul. Misalnya fitur `suhu`. Apakah kebanyakan buah suka suhu 25 derajat atau 30 derajat?
 
-```python
-num_features = data.select_dtypes(include=[np.number])
-num_cols = num_features.columns
+### B. Box Plot: Mencari Si "Penyusup" (Outlier)
+Box plot adalah kotak yang menunjukkan rentang "wajar" dari sebuah data. Titik-titik yang berada jauh di luar kotak disebut **Outlier** (Pencilan). 
+*Kenapa outlier berbahaya?* Bayangkan rata-rata curah hujan adalah 100 mm. Tiba-tiba ada 1 data yang curah hujannya 10.000 mm (mungkin salah ketik saat input data). Kalau data ini dibiarkan, rata-rata curah hujan kita bakal kacau dan mesin bakal kebingungan.
 
-fig, axes = plt.subplots(3, 3, figsize=(15, 12))
-axes = axes.flatten()
+### C. Heatmap Korelasi: Siapa Teman Siapa?
+Ini adalah peta warna-warni yang menunjukkan hubungan (korelasi) antar fitur.
+- **Nilai mendekati 1 (Merah)**: Hubungan positif kuat. Kalau fitur A naik, fitur B ikut naik.
+- **Nilai mendekati -1 (Biru)**: Hubungan negatif kuat. Kalau A naik, B malah turun.
+- **Nilai 0**: Nggak ada hubungannya sama sekali.
 
-for i, col in enumerate(num_cols):
-    sns.histplot(data[col], bins=30, kde=True, color='teal', ax=axes[i])
-    axes[i].set_title(f'Distribusi {col}', fontsize=12, fontweight='bold')
-    axes[i].set_xlabel('')
-
-for j in range(len(num_cols), len(axes)):
-    fig.delaxes(axes[j])
-
-plt.suptitle('Distribusi Fitur Numerik Dataset Buah Tropis', fontsize=16, y=1.01)
-plt.tight_layout()
-plt.show()
-```
-
-### 3.2 Deteksi Outlier (Boxplot Grid 3x3)
-
-```python
-fig, axes = plt.subplots(3, 3, figsize=(15, 12))
-axes = axes.flatten()
-
-for i, col in enumerate(num_cols):
-    sns.boxplot(x=data[col], color='skyblue', ax=axes[i])
-    axes[i].set_title(f'Box Plot — {col}', fontsize=12, fontweight='bold')
-    axes[i].set_xlabel('')
-
-for j in range(len(num_cols), len(axes)):
-    fig.delaxes(axes[j])
-
-plt.suptitle('Deteksi Outlier per Fitur Numerik', fontsize=16, y=1.01)
-plt.tight_layout()
-plt.show()
-```
-
-### 3.3 Matriks Korelasi Pearson
-
-```python
-plt.figure(figsize=(10, 8))
-correlation_matrix = num_features.corr()
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1,
-            fmt='.2f', linewidths=0.5, cbar_kws={'shrink': 0.8})
-plt.title('Matriks Korelasi Pearson — Dataset Buah Tropis', fontsize=14, fontweight='bold')
-plt.tight_layout()
-plt.show()
-```
-
-### 3.4 Rata-Rata Karakteristik Lingkungan per Buah (Heatmap Groupby)
-
-```python
-crop_summary = data.groupby('label')[num_cols].mean()
-
-plt.figure(figsize=(10, 6))
-sns.heatmap(crop_summary, annot=True, fmt='.1f', cmap='YlGnBu', linewidths=0.5)
-plt.title('Rata-Rata Karakteristik Lingkungan per Jenis Buah Tropis', fontsize=14, fontweight='bold')
-plt.xlabel('Fitur Lingkungan', fontsize=11)
-plt.ylabel('Jenis Buah', fontsize=11)
-plt.tight_layout()
-plt.show()
-```
-
-**Konsep Domain Knowledge Berbasis Statistik Rata-rata ($\mu$):**
-Tabel rekapitulasi agregasi `groupby().mean()` memberikan cetak biru *domain knowledge* industri pertanian murni.
-- **Korelasi Iklim:** Kita bisa melihat perbedaan mencolok kebutuhan curah hujan ($\mu_{Rainfall}$). Mangga (Mango) adalah vegetasi iklim lebih kering (~50% kelembapan) sementara Pepaya (Papaya) beradaptasi murni di kelembapan tinggi ekstrim (>80%).
-- Keunggulan EDA ini menuntun Data Scientist menentukan jika model nanti melakukan kesalahan tebakan antara Mangga dan Semangka, analisis awal ini akan memvalidasi apakah curah hujan sampel tersebut berada pada "persimpangan irisan" distribusi kedua kelas tersebut.
+*Kenapa penting?* Kalau ada dua fitur yang korelasinya merah pekat (mendekati 1), itu artinya mereka memberikan informasi yang sama (mubazir). Kadang kita bisa membuang salah satunya biar mesin tidak kerja terlalu berat.
 
 ---
 
-## 4. Data Processing
+## 4. Data Processing: Memandikan Data Sebelum Latihan
 
-Fase sterilisasi kualitas data yang krusial sebelum ditelan oleh permesinan optimisasi gradien kalkulus.
+Data mentah itu ibarat sayuran yang baru dicabut dari tanah, masih banyak lumpurnya. Kita harus bersihkan (preprocessing) dulu sebelum dimasak.
 
-### 4.1 Pisahkan Fitur dan Label
+### A. Memisahkan Fitur ($X$) dan Target ($y$)
+Kita harus membelah data menjadi dua.
+- **$X$ (Fitur/Soal)**: Kondisi N, P, K, suhu, curah hujan, dll.
+- **$y$ (Target/Kunci Jawaban)**: Nama buahnya (Mangga, Pepaya, dll).
 
-```python
-X = data.drop(columns='label').copy()
-y = data['label']
-```
+### B. Menjinakkan Outlier (Metode IQR)
+Ingat si penyusup di tahap Box Plot tadi? Kita atasi pakai matematika sederhana: **Interquartile Range (IQR)**.
+1. Kita cari batas kuartil bawah ($Q1$) dan batas kuartil atas ($Q3$).
+2. Cari jaraknya: $IQR = Q3 - Q1$.
+3. Tentukan "Pagar Bawah": $Q1 - (1.5 \times IQR)$
+4. Tentukan "Pagar Atas": $Q3 + (1.5 \times IQR)$
 
-### 4.2 Penanganan Outlier dengan Metode Kuartil (IQR)
+Setiap angka curah hujan yang melompat melewati pagar atas, nggak kita buang, tapi kita **paksa turun** (capping) agar nilainya sama persis dengan tinggi pagar atas. Ini menyelamatkan jumlah data kita agar tidak berkurang.
 
-```python
-num_cols = X.columns
+### C. Standardisasi (Z-Score)
+Ini bagian yang sangat, sangat penting untuk algoritma KNN.
+Bayangkan fitur **pH tanah** angkanya cuma 5 sampai 7. Tapi fitur **Curah Hujan** angkanya bisa 100 sampai 300.
+Mesin itu nggak ngerti konteks. Dia cuma lihat angka. Karena 300 jauh lebih besar dari 7, mesin bakal menganggap "Curah Hujan itu fitur yang paling penting, pH tanah abaikan saja!"
 
-for col in num_cols:
-    Q1 = X[col].quantile(0.25)
-    Q3 = X[col].quantile(0.75)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    
-    # Capping nilai outlier membatasi ekstremitas
-    X[col] = np.clip(X[col], lower_bound, upper_bound)
-```
+Agar mesin adil, semua angka kita kompres ke dalam skala yang sama pakai `StandardScaler`.
+Rumus matematikanya (Z-Score):
+$$Z = \frac{X - \mu}{\sigma}$$
+*Keterangan:*
+- $X$ = Angka aslinya
+- $\mu$ (mu) = Nilai rata-rata dari seluruh data
+- $\sigma$ (sigma) = Standar deviasi (sebaran datanya)
 
-**Matematika Capping Outlier (Winsorizing):**
-Nilai-nilai ekstrim secara brutal menggeser posisi *Mean* (rata-rata) pada saat standardisasi. Alih-alih memenggal dan membuang observasi $X > Upper Bound$ yang dapat merusak keseimbangan ukuran jumlah sampel $N$, operasi pembatasan aljabar `np.clip` memancangkan pagar limit paksa, membuat sampel penyimpangan maksimum tertahan tepat setara di angka batas $Upper Bound$.
+Hasilnya? Semua kolom akan punya rata-rata 0. Adil, kan?
 
-#### Visualisasi Box Plot Setelah Penanganan Outlier
+### D. Label Encoding
+Mesin cuma bisa baca angka, nggak bisa baca huruf teks. Jadi "Mangga", "Pisang", "Pepaya" kita ubah jadi angka 0, 1, 2, 3 pakai `LabelEncoder`.
 
-```python
-fig, axes = plt.subplots(3, 3, figsize=(15, 12))
-axes = axes.flatten()
-
-for i, col in enumerate(X.columns):
-    sns.boxplot(x=X[col], color='skyblue', ax=axes[i])
-    axes[i].set_title(f'Box Plot — {col} (Setelah IQR)', fontsize=12, fontweight='bold')
-    axes[i].set_xlabel('')
-
-for j in range(len(X.columns), len(axes)):
-    fig.delaxes(axes[j])
-
-plt.suptitle('Box Plot Setelah Penanganan Outlier (IQR Capping)', fontsize=16, y=1.01)
-plt.tight_layout()
-plt.show()
-```
-
-### 4.3 Standardisasi Fitur (StandardScaler)
-
-```python
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-```
-
-**Matematika Transformasi Z-Score:**
-Berbeda dari *MinMaxScaler* yang "memenjarakan" rentang nilai dalam interval absolut $[0, 1]$, *StandardScaler* mentransformasi bentuk sebaran kurva populasi data itu sendiri menjadi sebuah fungsi Distribusi Normal Standar.
-Rumus matematika:
-$$z = \frac{X - \mu}{\sigma}$$
-Setiap nilai fitur numerik asli ($X$) akan dikurangi oleh rata-rata fiturnya ($\mu$) lalu dibagi dengan Standar Deviasi/Simpangan Bakunya ($\sigma$).
-Hasil akhirnya: Vektor kolom tersebut akan memiliki titik berat keseimbangan nilai *Mean* baru persis tepat di titik nol ($\mu = 0$) dengan fluktuasi varians satu satuan mutlak ($\sigma = 1$). Hal ini mengamankan konvergensi jarak spasial bagi model SVM dan KNN.
-
-### 4.4 Label Encoding
-
-```python
-label_encoder = LabelEncoder()
-y = label_encoder.fit_transform(y)
-```
-
-### 4.5 Bagi Data Latih dan Uji (80:20)
-
-```python
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    random_state=42,
-    test_size=0.2,
-    stratify=y
-)
-```
-
-**Matematika Pemisahan Stratifikasi:**
-Parameter `stratify=y` menjamin prinsip *Proportional Representation*. Apabila proporsi data populasi asli untuk keempat buah tropis adalah masing-masing tepat $25\%$, maka subset *Training* (1920 baris) dan subset *Testing* (480 baris) akan diiris dan diaduk sedemikian rupa agar masing-masing memiliki fraksi matematis representasi persis tepat $25\%$ pada kelas komponen pembentuknya secara berimbang murni absolut.
+### E. Data Splitting (80:20)
+Kita pisah data jadi dua: **Data Latih (80%)** dan **Data Uji (20%)**.
+Ibarat anak sekolah, 80% soal dipakai buat latihan di kelas, 20% sisanya disembunyikan sama guru buat soal Ujian Nasional. Tujuannya biar kita tahu apakah mesinnya beneran pintar, atau cuma jago menghafal soal latihan.
 
 ---
 
-## 5. Model Training
+## 5. Inti Materi: Algoritma K-Nearest Neighbors (KNN)
+
+Sekarang kita masuk ke otaknya! Kita pakai algoritma **KNN**. Bagaimana cara kerja KNN? Sangat simpel.
+
+**Prinsip Kerja KNN:** "Katakan padaku siapa teman-teman terdekatmu, maka aku akan tahu siapa dirimu."
+
+Bayangkan ada titik misterius baru masuk (data ujian). KNN akan melihat tetangga-tetangga terdekatnya. Kalau $K = 5$, mesin akan mencari 5 titik data latihan yang jaraknya paling dekat dengan si titik misterius ini.
+Kalau dari 5 titik itu, 3 titik adalah "Mangga" dan 2 titik adalah "Pepaya", maka secara voting mayoritas, titik misterius itu akan ditebak sebagai **"Mangga"**.
+
+### Perhitungan Matematikanya (Jarak Euclidean)
+Bagaimana mesin tahu mana yang "dekat"? Dia menghitung jarak lurus (seperti ditarik pakai penggaris) menggunakan rumus *Euclidean Distance*, yang sebenarnya adalah pengembangan dari rumus Pythagoras peninggalan zaman Yunani kuno!
+
+Rumusnya:
+$$d(p, q) = \sqrt{(p_1 - q_1)^2 + (p_2 - q_2)^2 + \dots + (p_n - q_n)^2}$$
+*(Intinya, jarak adalah akar dari total selisih angka setiap fitur yang dikuadratkan).*
+
+Inilah kenapa tahap **Standardisasi (Z-Score)** di atas sangat wajib. Kalau angkanya nggak disamakan skalanya, perhitungan jarak Pythagoras ini bakal hancur lebur ditarik oleh fitur yang angkanya ribuan.
 
 ```python
-knn = KNeighborsClassifier().fit(X_train, y_train)
-dt  = DecisionTreeClassifier().fit(X_train, y_train)
-rf  = RandomForestClassifier().fit(X_train, y_train)
-svm = SVC().fit(X_train, y_train)
-nb  = GaussianNB().fit(X_train, y_train)
-
-print("Training selesai untuk 5 model klasifikasi...")
-```
-
-**Pilar Matematika Algoritma Gaussian Naive Bayes (Fokus Modul):**
-*Naive Bayes* bekerja dengan filosofi murni peninggalan pendeta Thomas Bayes tentang Probabilitas Bersyarat (*Conditional Probability*).
-Persamaan matematis mutlak Teorema Bayes dalam ranah klasifikasi probabilitas fitur (X) terhadap kelas (y):
-$$P(y \mid X) = \frac{P(X \mid y) \cdot P(y)}{P(X)}$$
-- $P(y \mid X)$ adalah *Posterior Probability*: Seberapa besar peluang buah tersebut adalah Mangga jika diketahui nilai $N, P, K$ tertentu.
-- $P(X \mid y)$ adalah *Likelihood*: Probabilitas ditemukannya kadar rentang $N, P, K$ khusus pada himpunan data yang terbukti berlabel Mangga.
-- Mengapa disebut "Naive"? Karena fungsi ini secara polos berasumsi keras (naif) bahwa eksistensi fitur $N$ benar-benar saling terisolasi mutlak (independen) tak ada kaitannya sama sekali dengan eksistensi fitur $P$ dan $K$, suatu kejadian matematis probabilitas yang mustahil sempurna di dunia alam bebas, namun secara praktek performa algoritmanya mengejutkan tangguh dan luar biasa efisien komputasinya.
-
----
-
-## 6. Model Evaluation & Comparison
-
-```python
-def evaluate_model(name, model, X_test, y_test, label_names):
-    y_pred = model.predict(X_test)
-    cm = confusion_matrix(y_test, y_pred)
-
-    print(f"==== {name} ====")
-    print(f"Accuracy  : {accuracy_score(y_test, y_pred):.4f}")
-    print(f"Precision : {precision_score(y_test, y_pred, average='weighted'):.4f}")
-    print(f"Recall    : {recall_score(y_test, y_pred, average='weighted'):.4f}")
-    print(f"F1-Score  : {f1_score(y_test, y_pred, average='weighted'):.4f}")
-    print("\nClassification Report:")
-    print(classification_report(y_test, y_pred, target_names=label_names))
-
-    plt.figure(figsize=(6, 5))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-                xticklabels=label_names, yticklabels=label_names)
-    plt.title(f'Confusion Matrix — {name}')
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
-    plt.tight_layout()
-    plt.show()
-
-    return {
-        'Model': name,
-        'Accuracy':  accuracy_score(y_test, y_pred),
-        'Precision': precision_score(y_test, y_pred, average='weighted'),
-        'Recall':    recall_score(y_test, y_pred, average='weighted'),
-        'F1-Score':  f1_score(y_test, y_pred, average='weighted'),
-    }
-
-label_names = label_encoder.classes_
-results = [
-    evaluate_model("KNN",            knn, X_test, y_test, label_names),
-    evaluate_model("Decision Tree",  dt,  X_test, y_test, label_names),
-    evaluate_model("Random Forest",  rf,  X_test, y_test, label_names),
-    evaluate_model("SVM",            svm, X_test, y_test, label_names),
-    evaluate_model("Naive Bayes",    nb,  X_test, y_test, label_names),
-]
+# Cukup 2 baris untuk melatih model!
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train)
 ```
 
 ---
 
-## 7. Model Comparison
+## 6. Ujian Nasional: Evaluasi Performa Model
 
-```python
-rows = []
-for res in results:
-    rows.append({
-        "Model":     res["Model"],
-        "Accuracy":  res["Accuracy"],
-        "Precision": res["Precision"],
-        "Recall":    res["Recall"],
-        "F1-Score":  res["F1-Score"],
-    })
+Mesin sudah belajar, sekarang kita tes pakai Data Uji (20% tadi).
 
-summary_df = pd.DataFrame(rows)
-print(summary_df.to_string(index=False))
-```
+### A. Mengenal Confusion Matrix
+Confusion Matrix itu rapornya si mesin. Matriks ini blak-blakan ngasih tau di mana mesin ini pinter, dan di mana dia oon (suka tertukar).
 
----
+Ada 4 komponen dasar dari tebakan mesin:
+1. **True Positive (TP)**: Mesin nebak "Mangga", dan aslinya emang "Mangga". (Benar!).
+2. **True Negative (TN)**: Mesin nebak "Ini bukan Mangga", dan aslinya emang bukan Mangga. (Benar!).
+3. **False Positive (FP)**: Mesin teriak "Ini Mangga!", padahal aslinya Semangka. (Alarm palsu / Sok tahu).
+4. **False Negative (FN)**: Aslinya Mangga, tapi mesin diam aja dan bilang "Bukan Mangga". (Kebobolan / Kurang peka).
 
-## 8. Best Model & Error Analysis
+Di grafik Heatmap Confusion Matrix, lihatlah kotak-kotak yang berbaris menyilang (diagonal). Itu adalah total tebakan yang **Benar (TP)**. Makin gede angkanya, makin bagus. Kotak-kotak di luar garis itu adalah kesalahan tebakan. Dari situ kita bisa tahu, "Wah, modelnya suka kebingungan bedain Pepaya sama Semangka nih!"
 
-Memilih sang pemenang mahkota takhta, dan langsung melangkah mengeksekusi otopsi membedah mikroskopis rentetan celah kegagalan sang model sang juara.
-
-```python
-best_model_name = summary_df.loc[summary_df['Accuracy'].idxmax(), 'Model']
-print(f"Model terbaik: {best_model_name}")
-
-model_map = {
-    'KNN': knn,
-    'Decision Tree': dt,
-    'Random Forest': rf,
-    'SVM': svm,
-    'Naive Bayes': nb
-}
-best_model = model_map[best_model_name]
-y_pred_best = best_model.predict(X_test)
-
-cm_best = confusion_matrix(y_test, y_pred_best)
-
-plt.figure(figsize=(6, 5))
-sns.heatmap(cm_best, annot=True, fmt='d', cmap='Reds',
-            xticklabels=label_encoder.classes_,
-            yticklabels=label_encoder.classes_)
-plt.title(f'Confusion Matrix — {best_model_name}\n(Model Terbaik)', fontweight='bold')
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.tight_layout()
-plt.show()
-```
-
-**Penjelasan Dasar Anatomi Prediksi Kegagalan Confusion Matrix:**
-Dataset ini sengaja disintesis agar terjadi gesekan tumpang tindih fitur. Di sinilah letak kritikal Confusion Matrix.
-Jika Akurasi berhenti di angka rasio empiris ~95%, di manakah tepatnya 5% letak kebodohan algoritma model?
-- Titik koordinat diagonal merah gelap (sisi kiri atas ke sisi kanan bawah matriks) adalah wujud murni indikator kemenangan **True Positives (TP)**. Makin besar angkanya, makin akurat tebakan model.
-- Elemen di luar lintasan diagonal utama adalah indikator cacat noda kegagalan, wujud inkarnasi pergesekan matriks *False Positives* (Tebakan Halu) dan *False Negatives* (Tebakan Meleset/Luput). Peserta harus mencari letak angka anomali terbesar di luar rel lintasan diagonal. Jika angka kesilapan terbanyak terpusat pada irisan sumbu Aktual Pepaya menyeberang diprediksi sebagai Semangka, kita bisa menarik konklusi deduksi saintifik bahwa proporsi rentang kelembaban dan nutrisi antara Pepaya dan Semangka memiliki kesamaan ekstrem.
+### B. Metrik Evaluasi: Rapor Angka
+1. **Accuracy (Akurasi)**: Dari 100 soal ujian, berapa yang dijawab benar? 
+   $$\frac{TP + TN}{TP + TN + FP + FN}$$
+2. **Precision (Ketelitian)**: Kalau mesin ngotot bilang ini "Mangga", seberapa bisa kita percaya omongannya? 
+   $$\frac{TP}{TP + FP}$$
+3. **Recall (Daya Ingat)**: Dari semua Mangga yang ada di dunia nyata, berapa banyak yang berhasil dikenali sama mesin (nggak ada yang lolos)?
+   $$\frac{TP}{TP + FN}$$
+4. **F1-Score**: Nilai keseimbangan (rata-rata harmonik) antara Precision dan Recall. Kalau salah satu jelek, F1-Score bakal anjlok buat ngasih hukuman.
 
 ---
 
-## 9. Menyimpan Model (Save Model)
+## 7. Save & Load Model: Bawa Pulang Ilmu!
+
+Bayangkan butuh waktu 3 hari buat melatih AI. Masa tiap kali kita matikan laptop, kita harus melatih ulang dari awal? Kan capek!
+
+Oleh karena itu, otak AI yang sudah cerdas ini kita "bekukan" ke dalam sebuah file berekstensi `.joblib`.
+Proses ini disebut *Serialization*.
 
 ```python
 import joblib
-import os
 
-os.makedirs('../model', exist_ok=True)
+# Menyimpan otak KNN
+joblib.dump(knn, '../model/best_buah_model.joblib')
 
-joblib.dump(best_model, '../model/best_buah_model.joblib')
+# JANGAN LUPA simpan juga Scaler dan Encoder-nya!
 joblib.dump(scaler, '../model/buah_scaler.joblib')
 joblib.dump(label_encoder, '../model/buah_label_encoder.joblib')
-
-print("Model, Scaler, dan Label Encoder berhasil disimpan ke folder model/")
 ```
 
----
-
-## 10. Memuat Model dan Pengujian (Load Model & Testing)
-
-Eksekusi siklus penutupan murni inferensi model untuk menguji mempraktekkan tebakan langsung layaknya model dijalankan pada operasi *Application Programming Interface (API)* di lini belakang ranah perangkat lunak industri sejati.
-
-```python
-import joblib
-
-loaded_model = joblib.load('../model/best_buah_model.joblib')
-loaded_scaler = joblib.load('../model/buah_scaler.joblib')
-loaded_encoder = joblib.load('../model/buah_label_encoder.joblib')
-
-data_baru = pd.DataFrame({
-    'N': [20],
-    'P': [27],
-    'K': [30],
-    'temperature': [31.50],
-    'humidity': [50.20],
-    'ph': [5.80],
-    'rainfall': [95.00]
-})
-
-# Operasi Konversi Penskalaan Terstandar menggunakan Titik Pusat Historis Murni
-data_scaled = loaded_scaler.transform(data_baru)
-
-# Pelaksanaan Sabda Penentuan Kalkulasi Eksekusi Inferensi Model Matematis
-prediksi = loaded_model.predict(data_scaled)
-
-# Penafsiran Terjemahan Dekripsi Sandi Mesin Algoritma Merujuk Kembali Ke Wujud Teks Label Manusia
-prediksi_label = loaded_encoder.inverse_transform(prediksi)
-
-print(f"Buah yang direkomendasikan: {prediksi_label[0]}")
-```
+**Kenapa Scaler dan Encoder wajib ikut disimpan?**
+Karena otak model ini sudah terbiasa dengan "makanan" berupa Z-Score. Kalau besok-besok ada orang masukin data tanah dari kebun asli (angka ratusan), mesinnya bakal kaget dan salah tebak. Data asli itu harus di-*transform* dulu pakai timbangan `Scaler` yang sama persis seperti saat dia latihan, baru disuapin ke otak `KNN`.
 
 ---
 
-## Ringkasan Project
+### Selesai!
+Sekarang Anda sudah paham betul bagaimana K-Nearest Neighbors bekerja dari hulu ke hilir. Silakan kembali ke [Jupyter Notebook `crop_buah_model.ipynb`](../notebooks/crop_buah_model.ipynb) dan mainkan sendiri kodenya (klik **Run All**). 
 
-| Tahapan Operasional | Objektif Misi Peran Esensial | Output |
-|--------|--------|--------|
-| Import Library | Persiapan pengadaan instrumen tools fondasi saintifik ML | Eksekusi kelancaran ketersediaan library tanpa hambatan sintaks error |
-| Data Loading | Memompa masuk transfer bongkahan rekam jejak dataset mentah historis 4 faksi kelas | Himpunan baris kolom DataFrame pandas utuh siap diolah |
-| EDA (Eksplorasi) | Membongkar pencerahan pandangan mendalam menginvestigasi memahami hakikat sebaran variabilitas | Deretan Galeri Subplot Grid, Anatomi Rangkaian Matriks Panas Rata-rata Lingkungan Iklim |
-| Data Processing | Ritual sterilisasi amputasi batas IQR Outlier Capping, standarisasi seragam Z-Score StandardScaler, & konversi dekoding LabelEncoder | X matriks pilar mulus seragam suci, array label vektor y matriks angka integer |
-| Data Splitting | Isolasi karantina perpecahan Train/Test split rasio pakem standar (80:20) proporsional seimbang | 4 Kepingan Subset Fragmen Terpecah Belah: X_train, X_test, y_train, y_test |
-| Model Training | Eksekusi kawah candradimuka penempaan pelatihan komparasi murni 5 ksatria pilar arsitektur algoritma | Kelahiran penciptaan 5 entitas mesin model siap tempur |
-| Evaluation | Eksekusi peluncuran instrumen interogasi pengujian pengukuran penyeimbangan performa | Penjabaran laporan purna bakti Classification Report & hamparan rentang Confusion Matrix |
-| Save & Load | Ekspor konservasi pelestarian abadi keabadian warisan simulasi rekayasa deployment sistem perangkat lunak | File `.joblib` suci abadi di ruang kuil perpustakaan `model/` |
-
----
-
-## Tips Belajar
-1. Kewajiban fundamental mutlak, jalankan proses rutinitas eksekusi setiap blok sel baris secara urut tak henti (Cell -> Run All). 
-2. Amati dengan panca indra kritis analitis bagaimana dampak distorsi penambahan riak gelombang variansi alami bumbu guncangan pada dataset sintetis membatasi rentang skor akurasi mutlak secara masuk akal empiris, mencetak menciptakan ruang kesalahan *misclassification* murni.
-3. Selidiki pantau perhatikan area matriks kekacauan *Confusion Matrix* khusus secara eksklusif absolut hanya untuk membedah memata-matai varietas klaster buah apa yang saling mempertukarkan dan merancukan tebakan.
-4. Bereksperimenlah memodifikasi suntikan hyperparameter algoritma Naive Bayes atau KNN dan lihat apakah penyesuaian matematika model sanggup mendobrak menembus batasan dinding 96% akurasi.
-5. Manfaatkan berkas abadi `.joblib` di sesi akhir penutupan kelulusan modul untuk mensimulasikan integrasi murni mutlak eksekusi ke ranah operasional server atau aplikasi berbasis Python (*Flask/Streamlit*).
+Jangan takut untuk bereksperimen, misalnya: Coba ubah nilai parameter $K$ di KNN menjadi 3 atau 10 (`KNeighborsClassifier(n_neighbors=3)`), lalu lihat apakah rapornya jadi makin bagus atau malah hancur? Selamat mencoba!

@@ -1,43 +1,57 @@
 # Mini Bootcamp Artificial Intelligence — Machine Learning Classification
 
-Repository ini dirancang secara eksklusif sebagai materi bootcamp dan modul praktikum Machine Learning untuk membimbing peserta memahami alur kerja (end-to-end Machine Learning pipeline) klasifikasi terstruktur dalam Bahasa Indonesia secara mendalam.
+Repository ini dirancang sebagai materi bootcamp dan modul praktikum Machine Learning untuk membimbing peserta memahami alur kerja klasifikasi (end-to-end Machine Learning pipeline) dalam Bahasa Indonesia.
 
 ---
 
-## Modul dan Notebook Pembelajaran
+## Materi Utama Bootcamp
 
-Repositori ini terdiri dari 3 modul praktikum bertingkat dengan tingkat kompleksitas yang dirancang untuk pembelajaran progresif:
+Materi inti yang akan digunakan selama sesi bootcamp adalah notebook berikut:
 
-| Modul Notebook | Dataset | Jumlah Kelas | Metode Scaling | Algoritma Utama | Tingkat Kesulitan |
-|---|---|:---:|:---:|---|:---:|
-| [`notebooks/iris_clasification_model.ipynb`](notebooks/iris_clasification_model.ipynb) | `dataset/Iris.csv` (150 sampel) | 3 | `MinMaxScaler` | KNN, DT, RF, SVM, **Logistic Regression** | Dasar / Pemula |
-| [`notebooks/crop_buah_model.ipynb`](notebooks/crop_buah_model.ipynb) | `dataset/crop_buah_tropis.csv` (2.400 sampel) | 4 | `StandardScaler` | KNN, DT, RF, SVM, **Naive Bayes** | Menengah |
-| [`notebooks/crop_recommendation_model.ipynb`](notebooks/crop_recommendation_model.ipynb) | `dataset/crop_recommendation.csv` (2.200 sampel) | 22 | `StandardScaler` | KNN, DT, RF, SVM, **Naive Bayes** | Lanjutan |
+### [`notebooks/crop_buah_model.ipynb`](notebooks/crop_buah_model.ipynb) — Klasifikasi Buah Tropis dengan KNN
+
+Notebook ini menjadi panduan utama bootcamp. Peserta akan dibimbing langkah demi langkah membangun model klasifikasi **K-Nearest Neighbors (KNN)** untuk memprediksi jenis buah tropis (Pisang, Mangga, Pepaya, Semangka) berdasarkan 7 parameter kondisi lingkungan dan tanah.
+
+**Yang akan dipelajari:**
+- Import library dan data loading (`pandas`, `numpy`, `sklearn`)
+- Exploratory Data Analysis (EDA): Histogram, Boxplot, Correlation Heatmap, Scatter Plot
+- Penanganan Outlier dengan metode IQR Capping
+- Standardisasi fitur menggunakan `StandardScaler` (Z-Score)
+- Label Encoding untuk konversi label teks ke numerik
+- Training model KNN dan evaluasi performa (Accuracy, Precision, Recall, F1-Score)
+- Analisis Confusion Matrix dan Error Analysis
+- Save & Load model menggunakan `joblib`
+
+**Dataset:** [`dataset/crop_buah_tropis.csv`](dataset/crop_buah_tropis.csv) (2.400 sampel, 4 kelas)
 
 ---
 
-## Materi dan Konsep yang Dipelajari
+## Latihan dan Referensi Tambahan
 
-Setiap modul notebook disusun untuk mengajarkan tahapan standar industri murni dari ranah Data Science:
+Setelah menyelesaikan materi utama, peserta dapat mengasah kemampuan lebih lanjut melalui notebook latihan berikut:
 
-1. **Persiapan Library dan Data Loading**: Melatih insting memanipulasi ruang dimensi data menggunakan struktur `pandas` dan vektor kalkulasi `numpy`.
-2. **Exploratory Data Analysis (EDA)**:
-   - Visualisasi distribusi fitur statistik fundamental (Histogram Grid, Pairplot, Violin Plot, Swarm Plot).
-   - Analisis korelasi linear murni dengan perwujudan instrumen visual Heatmap Pearson.
-   - Menggali ekstraksi *domain knowledge* lewat perumusan rerata (mean) karakteristik lingkungan per pilar jenis tanaman.
-3. **Data Preprocessing**:
-   - **Penanganan Outlier Ekstrem**: Pembatasan pemotongan nilai menyimpang dengan metode rasional IQR Capping (Winsorizing) lewat limit pagar pembatas kuartil tanpa melukai mencederai menghapus titik observasi murni baris data.
-   - **Feature Scaling**: Komparasi mendalam pertarungan pilar fundamental penyusutan kompresi dimensi normalisasi limit absolut batas rentang pecahan `MinMaxScaler` (rentang paksa 0-1) murni menantang melawan pilar raksasa sentralisasi kalibrasi standarisasi gravitasi deviasi konversi probabilitas Gaussian bel murni titik tengah `StandardScaler`.
-   - **Label Encoding**: Transformasi rekayasa pilar kolom dimensi kelas teks murni murni abjad ke representasi konversi mutlak bilangan matematis bulat.
-   - **Data Splitting**: Menerapkan proporsi distribusi belahan pilar Stratified Train/Test Split menjaga keseimbangan hukum alam ekuilibrium proporsi sebaran populasi.
-4. **Model Training dan Komparasi**:
-   - Mengkaji pertempuran perbandingan konfrontasi kaliber daya gempur kecerdasan mutlak 5 algoritma klasifikasi sekaligus: KNN, Decision Tree, Random Forest, SVM, Naive Bayes / Logistic Regression.
-5. **Model Evaluation dan Error Analysis Analitik**:
-   - Pemahaman pembedahan indikator angka pilar laporan parameter evaluasi berbasis metrik murni (Accuracy, Precision, Recall, F1-Score).
-   - Analisis investigasi pembedahan kegagalan otopsi forensik forensik Confusion Matrix untuk mengungkap dalang kelemahan kelas buta yang paling sering mempertukarkan mengacaukan kesalahan prediksi menyimpang membelot buta tragis menyedihkan.
-6. **Model Serialization (Save dan Load)**:
-   - Preservasi pengawetan penyimpanan arsip abadi murni instrumen model terlatih, kompresor Scaler, dan penterjemah bilangan LabelEncoder memanfaatkan librari mutlak `joblib` murni mengamankan pilar wujud arsip eksternal solid menyendiri bersandar bernaung menumpang bersarang menyelinap bersemayam merangkul abadi menetap di peraduan bilik folder pelestarian `/model`.
-   - Pengujian pembuktian eksekusi demonstrasi manifestasi implementasi pemanggilan kebangkitan roh pemanggilan mesin simulasi ramalan inferensi murni mutlak menerawang menyibak menelisik probabilitas di atas landasan pergerakan kepingan tebakan spesimen asing lingkungan segar fiktif palsu mutlak data baru.
+### [`notebooks/iris_clasification_model.ipynb`](notebooks/iris_clasification_model.ipynb) — Klasifikasi Bunga Iris
+- **Dataset:** [`dataset/Iris.csv`](dataset/Iris.csv) (150 sampel, 3 kelas)
+- **Tingkat:** Dasar / Pemula
+- **Fokus:** Pengenalan konsep dasar klasifikasi multiclass, normalisasi `MinMaxScaler`, dan perbandingan 5 algoritma (KNN, Decision Tree, Random Forest, SVM, Logistic Regression)
+
+### [`notebooks/crop_recommendation_model.ipynb`](notebooks/crop_recommendation_model.ipynb) — Rekomendasi Tanaman
+- **Dataset:** [`dataset/crop_recommendation.csv`](dataset/crop_recommendation.csv) (2.200 sampel, 22 kelas)
+- **Tingkat:** Lanjutan
+- **Fokus:** Klasifikasi skala besar dengan 22 jenis tanaman, standardisasi `StandardScaler`, dan perbandingan 5 algoritma (KNN, Decision Tree, Random Forest, SVM, Naive Bayes)
+
+---
+
+## Konsep yang Dipelajari
+
+Seluruh notebook disusun mengajarkan tahapan standar industri Data Science:
+
+1. **Persiapan Library dan Data Loading** — Manipulasi data menggunakan `pandas` dan komputasi numerik `numpy`.
+2. **Exploratory Data Analysis (EDA)** — Visualisasi distribusi fitur (Histogram, Boxplot, Pairplot, Violin Plot), analisis korelasi Pearson, dan ekstraksi domain knowledge melalui rata-rata karakteristik lingkungan per kelas.
+3. **Data Preprocessing** — Penanganan outlier (IQR Capping), Feature Scaling (`MinMaxScaler` / `StandardScaler`), Label Encoding, dan Stratified Train/Test Split.
+4. **Model Training** — Pelatihan algoritma klasifikasi KNN (materi utama) serta perbandingan multi-algoritma (latihan tambahan).
+5. **Model Evaluation** — Evaluasi metrik (Accuracy, Precision, Recall, F1-Score), Confusion Matrix, dan Error Analysis untuk mengidentifikasi kelemahan prediksi model.
+6. **Model Serialization (Save & Load)** — Penyimpanan model terlatih, Scaler, dan LabelEncoder menggunakan `joblib` untuk simulasi deployment.
 
 ---
 
@@ -45,61 +59,69 @@ Setiap modul notebook disusun untuk mengajarkan tahapan standar industri murni d
 
 ```text
 mini-bootcamp-artificial-intelligence/
-├── dataset/                        # Arsip berkas himpunan rekam jejak dataset (.csv)
-│   ├── Iris.csv                    # Dataset Bunga Iris (150 sampel, 3 kelas)
-│   ├── crop_buah_tropis.csv        # Dataset Buah Tropis Sintetis (2.400 sampel, 4 kelas)
-│   └── crop_recommendation.csv     # Dataset Rekomendasi Tanaman Asli (2.200 sampel, 22 kelas)
-├── docs/                           # Literatur perpustakaan dokumentasi tertulis teoritis lengkap (.md)
-│   ├── dataset.md                  # Penjelasan spesifikasi ketiga pondasi arsitektur dataset
-│   ├── iris_clasification_model.md # Dokumen manual instruksional pelatihan modul Iris
-│   ├── crop_buah_model.md          # Dokumen manual instruksional pelatihan modul Buah Tropis
-│   └── crop_recommendation_model.md# Dokumen manual instruksional pelatihan modul Rekomendasi Tanaman
-├── model/                          # Tempat peristirahatan preservasi model beku terlatih (.joblib)
+├── dataset/                            # Dataset (.csv)
+│   ├── Iris.csv                        # Dataset Bunga Iris (150 sampel, 3 kelas)
+│   ├── crop_buah_tropis.csv            # Dataset Buah Tropis (2.400 sampel, 4 kelas)
+│   └── crop_recommendation.csv         # Dataset Rekomendasi Tanaman (2.200 sampel, 22 kelas)
+├── docs/                               # Dokumentasi penjelasan teori lengkap (.md)
+│   ├── dataset.md                      # Spesifikasi detail ketiga dataset
+│   ├── iris_clasification_model.md     # Panduan modul Iris
+│   ├── crop_buah_model.md              # Panduan modul Buah Tropis (Materi Utama)
+│   └── crop_recommendation_model.md    # Panduan modul Rekomendasi Tanaman
+├── model/                              # Model terlatih (.joblib)
 │   ├── best_buah_model.joblib
 │   ├── best_crop_model.joblib
 │   └── best_iris_model.joblib
-├── notebooks/                      # Sentral kendali landasan pacu operasi Jupyter Notebook (.ipynb)
-│   ├── iris_clasification_model.ipynb
-│   ├── crop_buah_model.ipynb
-│   └── crop_recommendation_model.ipynb
-└── README.md                       # Buku Panduan Orientasi Repositori Keseluruhan
+├── notebooks/                          # Jupyter Notebook (.ipynb)
+│   ├── crop_buah_model.ipynb           # Materi Utama Bootcamp
+│   ├── iris_clasification_model.ipynb  # Latihan Tambahan
+│   └── crop_recommendation_model.ipynb # Latihan Tambahan
+└── README.md
 ```
 
 ---
 
 ## Cara Menggunakan (Quick Start)
 
-### 1. Clone Repositori dan Persiapkan Lingkungan Virtual
+### 1. Clone Repositori
 ```bash
-git clone https://github.com/OpenSource/mini-bootcamp-artificial-intelligence.git
+git clone https://github.com/Fiyanz/mini-bootcamp-artificial-intelligence.git
 cd mini-bootcamp-artificial-intelligence
 ```
 
-### 2. Instalasi Dependensi Inti Python
-Dianjurkan menggunakan bilik eksekusi terisolasi Virtual Environment (`venv`) murni:
-```bash
-python3 -m venv .venv
-source .venv/bin/activate  # Eksklusif eksekusi di sistem operasi basis kernel Linux/macOS murni
-# .venv\Scriptsctivate   # Eksklusif eksekusi di ekosistem platform sistem operasi basis Windows
+### 2. Instalasi Dependensi (menggunakan uv)
 
-pip install pandas numpy matplotlib seaborn scikit-learn joblib jupyter
+Sangat disarankan menggunakan [`uv`](https://github.com/astral-sh/uv) untuk manajemen virtual environment dan package yang jauh lebih cepat.
+
+Jika Anda belum menginstal `uv`, silakan instal terlebih dahulu sesuai OS Anda (atau lihat dokumentasi resminya).
+
+**Membuat Virtual Environment dan Instalasi Package:**
+```bash
+# Membuat virtual environment
+uv venv
+
+# Aktivasi virtual environment
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
+
+# Instalasi dependensi dengan uv pip (sangat cepat)
+uv pip install pandas numpy matplotlib seaborn scikit-learn joblib jupyter
 ```
 
-### 3. Eksekusi Peluncuran Ekosistem Lingkungan Jupyter Notebook
+*(Alternatif jika Anda menggunakan `pip` bawaan Python, gunakan `python3 -m venv .venv` lalu `pip install ...`)*
+
+### 3. Jalankan Jupyter Notebook
 ```bash
 jupyter notebook
 ```
-Buka gerbang penelusuran lorong direktori `notebooks/` lalu pilih secara selektif dokumen naskah instruksional berkas ekstensi titik ipynb instrumen modul praktikum simulasi mana yang pertama hendak Anda eksekusi pelajari bedah telusuri kuasai tuntas secara komprehensif mendalam!
+Buka folder `notebooks/` dan mulai dari **`crop_buah_model.ipynb`** sebagai materi utama bootcamp.
 
 ---
 
-## Dokumen Referensi dan Panduan Penjelasan Teori Mutlak
+## Dokumentasi Referensi
 
-Panduan ensiklopedia literatur penjelasan instruksional pilar teori landasan dasar mutlak yang luar biasa sangat mendalam komprehensif terperinci dan ekstensif absolut disajikan didokumentasikan diawetkan direkam dicetak dipahat dipublikasikan dilestarikan dalam wadah ruang bilik pelestarian lorong folder pilar suci [`docs/`](docs/):
-- [Penjelasan Parameter Arsitektur Fondasi Asal Muasal Struktur Spesifikasi Detail Himpunan Dataset Mentah Lengkap (`docs/dataset.md`)](docs/dataset.md)
-- [Dokumentasi Panduan Manual Instruksional Rinci Modul Model Klasifikasi Bunga Iris Murni (`docs/iris_clasification_model.md`)](docs/iris_clasification_model.md)
-- [Dokumentasi Panduan Manual Instruksional Rinci Modul Model Klasifikasi Kategori Buah Tropis Iklim Basah Murni (`docs/crop_buah_model.md`)](docs/crop_buah_model.md)
-- [Dokumentasi Panduan Manual Instruksional Rinci Modul Model Klasifikasi Inferensi Rekomendasi 22 Tanaman Agraris Pertanian Kaggle Mutlak (`docs/crop_recommendation_model.md`)](docs/crop_recommendation_model.md)
-
----
-Pangkalan pusat repositori pelatihan kawah candradimuka wadah kawah inkubasi ekosistem pilar perintis pusat pelatihan kecerdasan silikon buatan ini sengaja dirancang difabrikasi dikonstruksi dirakit secara eksklusif utuh sepenuhnya mutlak didedikasikan secara tuntas mutlak murni absolut untuk memandu membimbing memfasilitasi mendampingi menopang menyokong pengasuhan pematangan pencerahan pemahaman nalar daya tangkap logika ilmu komputasi struktur fundamental dasar pilar Machine Learning murni industri secara komprehensif terstruktur rigid sistematis analitis kronologis mendalam dan taktis mutlak bagi peserta murni.
+Penjelasan teori mendalam untuk setiap modul tersedia di folder [`docs/`](docs/):
+- [Spesifikasi Dataset](docs/dataset.md)
+- [Panduan Modul Buah Tropis — Materi Utama](docs/crop_buah_model.md)
+- [Panduan Modul Iris](docs/iris_clasification_model.md)
+- [Panduan Modul Rekomendasi Tanaman](docs/crop_recommendation_model.md)
