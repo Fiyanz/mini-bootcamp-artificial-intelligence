@@ -26,30 +26,14 @@ Notebook ini menjadi panduan utama bootcamp. Peserta akan dibimbing langkah demi
 
 ---
 
-## Latihan dan Referensi Tambahan
-
-Setelah menyelesaikan materi utama, peserta dapat mengasah kemampuan lebih lanjut melalui notebook latihan berikut:
-
-### [`notebooks/iris_clasification_model.ipynb`](notebooks/iris_clasification_model.ipynb) — Klasifikasi Bunga Iris
-- **Dataset:** [`dataset/Iris.csv`](dataset/Iris.csv) (150 sampel, 3 kelas)
-- **Tingkat:** Dasar / Pemula
-- **Fokus:** Pengenalan konsep dasar klasifikasi multiclass, normalisasi `MinMaxScaler`, dan perbandingan 5 algoritma (KNN, Decision Tree, Random Forest, SVM, Logistic Regression)
-
-### [`notebooks/crop_recommendation_model.ipynb`](notebooks/crop_recommendation_model.ipynb) — Rekomendasi Tanaman
-- **Dataset:** [`dataset/crop_recommendation.csv`](dataset/crop_recommendation.csv) (2.200 sampel, 22 kelas)
-- **Tingkat:** Lanjutan
-- **Fokus:** Klasifikasi skala besar dengan 22 jenis tanaman, standardisasi `StandardScaler`, dan perbandingan 5 algoritma (KNN, Decision Tree, Random Forest, SVM, Naive Bayes)
-
----
-
 ## Konsep yang Dipelajari
 
-Seluruh notebook disusun mengajarkan tahapan standar industri Data Science:
+Notebook disusun mengajarkan tahapan standar industri Data Science:
 
 1. **Persiapan Library dan Data Loading** — Manipulasi data menggunakan `pandas` dan komputasi numerik `numpy`.
-2. **Exploratory Data Analysis (EDA)** — Visualisasi distribusi fitur (Histogram, Boxplot, Pairplot, Violin Plot), analisis korelasi Pearson, dan ekstraksi domain knowledge melalui rata-rata karakteristik lingkungan per kelas.
-3. **Data Preprocessing** — Penanganan outlier (IQR Capping), Feature Scaling (`MinMaxScaler` / `StandardScaler`), Label Encoding, dan Stratified Train/Test Split.
-4. **Model Training** — Pelatihan algoritma klasifikasi KNN (materi utama) serta perbandingan multi-algoritma (latihan tambahan).
+2. **Exploratory Data Analysis (EDA)** — Visualisasi distribusi fitur (Histogram, Boxplot, Correlation Heatmap, Scatter Plot), analisis korelasi Pearson, dan ekstraksi domain knowledge melalui rata-rata karakteristik lingkungan per kelas.
+3. **Data Preprocessing** — Penanganan outlier (IQR Capping), Feature Scaling (`StandardScaler`), Label Encoding, dan Stratified Train/Test Split.
+4. **Model Training** — Pelatihan algoritma klasifikasi KNN.
 5. **Model Evaluation** — Evaluasi metrik (Accuracy, Precision, Recall, F1-Score), Confusion Matrix, dan Error Analysis untuk mengidentifikasi kelemahan prediksi model.
 6. **Model Serialization (Save & Load)** — Penyimpanan model terlatih, Scaler, dan LabelEncoder menggunakan `joblib` untuk simulasi deployment.
 
@@ -60,22 +44,16 @@ Seluruh notebook disusun mengajarkan tahapan standar industri Data Science:
 ```text
 mini-bootcamp-artificial-intelligence/
 ├── dataset/                            # Dataset (.csv)
-│   ├── Iris.csv                        # Dataset Bunga Iris (150 sampel, 3 kelas)
-│   ├── crop_buah_tropis.csv            # Dataset Buah Tropis (2.400 sampel, 4 kelas)
-│   └── crop_recommendation.csv         # Dataset Rekomendasi Tanaman (2.200 sampel, 22 kelas)
+│   └── crop_buah_tropis.csv            # Dataset Buah Tropis (2.400 sampel, 4 kelas)
 ├── docs/                               # Dokumentasi penjelasan teori lengkap (.md)
-│   ├── dataset.md                      # Spesifikasi detail ketiga dataset
-│   ├── iris_clasification_model.md     # Panduan modul Iris
-│   ├── crop_buah_model.md              # Panduan modul Buah Tropis (Materi Utama)
-│   └── crop_recommendation_model.md    # Panduan modul Rekomendasi Tanaman
+│   ├── dataset.md                      # Spesifikasi detail dataset
+│   └── crop_buah_model.md              # Panduan modul Buah Tropis (Materi Utama)
 ├── model/                              # Model terlatih (.joblib)
 │   ├── best_buah_model.joblib
-│   ├── best_crop_model.joblib
-│   └── best_iris_model.joblib
+│   ├── buah_label_encoder.joblib
+│   └── buah_scaler.joblib
 ├── notebooks/                          # Jupyter Notebook (.ipynb)
-│   ├── crop_buah_model.ipynb           # Materi Utama Bootcamp
-│   ├── iris_clasification_model.ipynb  # Latihan Tambahan
-│   └── crop_recommendation_model.ipynb # Latihan Tambahan
+│   └── crop_buah_model.ipynb           # Materi Utama Bootcamp
 └── README.md
 ```
 
@@ -118,10 +96,14 @@ Buka folder `notebooks/` dan mulai dari **`crop_buah_model.ipynb`** sebagai mate
 
 ---
 
+## Materi Tambahan
+
+Materi latihan tambahan (Klasifikasi Iris dan Rekomendasi Tanaman) tersedia di branch [`materi-tambahan`](https://github.com/Fiyanz/mini-bootcamp-artificial-intelligence/tree/materi-tambahan).
+
+---
+
 ## Dokumentasi Referensi
 
-Penjelasan teori mendalam untuk setiap modul tersedia di folder [`docs/`](docs/):
+Penjelasan teori mendalam untuk modul tersedia di folder [`docs/`](docs/):
 - [Spesifikasi Dataset](docs/dataset.md)
 - [Panduan Modul Buah Tropis — Materi Utama](docs/crop_buah_model.md)
-- [Panduan Modul Iris](docs/iris_clasification_model.md)
-- [Panduan Modul Rekomendasi Tanaman](docs/crop_recommendation_model.md)
