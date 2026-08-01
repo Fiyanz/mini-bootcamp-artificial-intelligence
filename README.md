@@ -67,13 +67,22 @@ git clone https://github.com/Fiyanz/mini-bootcamp-artificial-intelligence.git
 cd mini-bootcamp-artificial-intelligence
 ```
 
-### 2. Instalasi Dependensi (menggunakan uv)
+### 2. Buat Virtual Environment dan Instalasi Dependensi
 
-Sangat disarankan menggunakan [`uv`](https://github.com/astral-sh/uv) untuk manajemen virtual environment dan package yang jauh lebih cepat.
+**Opsi A — Menggunakan `pip` (standar):**
+```bash
+# Membuat virtual environment
+python -m venv .venv
 
-Jika Anda belum menginstal `uv`, silakan instal terlebih dahulu sesuai OS Anda (atau lihat dokumentasi resminya).
+# Aktivasi virtual environment
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
 
-**Membuat Virtual Environment dan Instalasi Package:**
+# Instalasi dependensi dari requirements.txt
+pip install -r requirements.txt
+```
+
+**Opsi B — Menggunakan [`uv`](https://github.com/astral-sh/uv) (lebih cepat):**
 ```bash
 # Membuat virtual environment
 uv venv
@@ -82,11 +91,9 @@ uv venv
 source .venv/bin/activate  # Linux/macOS
 # .venv\Scripts\activate   # Windows
 
-# Instalasi dependensi dengan uv pip (sangat cepat)
-uv pip install pandas numpy matplotlib seaborn scikit-learn joblib jupyter
+# Instalasi dependensi
+uv sync
 ```
-
-*(Alternatif jika Anda menggunakan `pip` bawaan Python, gunakan `python3 -m venv .venv` lalu `pip install ...`)*
 
 ### 3. Jalankan Jupyter Notebook
 ```bash
