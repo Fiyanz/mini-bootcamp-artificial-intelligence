@@ -65,9 +65,28 @@ EDA itu ibarat detektif yang sedang mengamati tempat kejadian perkara. Kita liha
 ### A. Histogram: Melihat Sebaran Data
 Histogram melihat kemana data paling banyak berkumpul. Misalnya fitur `suhu`. Apakah kebanyakan buah suka suhu 25 derajat atau 30 derajat?
 
+```python
+# Contoh membuat histogram untuk melihat sebaran fitur 'suhu'
+plt.figure(figsize=(8, 5))
+sns.histplot(data['suhu'], kde=True, color='blue')
+plt.title('Sebaran Data Suhu')
+plt.xlabel('Suhu')
+plt.ylabel('Frekuensi')
+plt.show()
+```
+
 ### B. Box Plot: Mencari Si "Penyusup" (Outlier)
 Box plot adalah kotak yang menunjukkan rentang "wajar" dari sebuah data. Titik-titik yang berada jauh di luar kotak disebut **Outlier** (Pencilan). 
 *Kenapa outlier berbahaya?* Bayangkan rata-rata curah hujan adalah 100 mm. Tiba-tiba ada 1 data yang curah hujannya 10.000 mm (mungkin salah ketik saat input data). Kalau data ini dibiarkan, rata-rata curah hujan kita bakal kacau dan mesin bakal kebingungan.
+
+```python
+# Contoh membuat boxplot untuk mencari outlier di fitur 'curah_hujan'
+plt.figure(figsize=(8, 5))
+sns.boxplot(x=data['curah_hujan'], color='orange')
+plt.title('Box Plot Curah Hujan')
+plt.xlabel('Curah Hujan (mm)')
+plt.show()
+```
 
 ### C. Heatmap Korelasi: Siapa Teman Siapa?
 Ini adalah peta warna-warni yang menunjukkan hubungan (korelasi) antar fitur.
@@ -76,6 +95,16 @@ Ini adalah peta warna-warni yang menunjukkan hubungan (korelasi) antar fitur.
 - **Nilai 0**: Nggak ada hubungannya sama sekali.
 
 *Kenapa penting?* Kalau ada dua fitur yang korelasinya merah pekat (mendekati 1), itu artinya mereka memberikan informasi yang sama (mubazir). Kadang kita bisa membuang salah satunya biar mesin tidak kerja terlalu berat.
+
+```python
+# Membuat heatmap untuk melihat korelasi antar fitur numerik
+plt.figure(figsize=(10, 8))
+# Menghapus kolom 'nama_buah' karena teks tidak bisa dihitung korelasinya
+korelasi = data.drop('nama_buah', axis=1).corr()
+sns.heatmap(korelasi, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Heatmap Korelasi Fitur Lingkungan')
+plt.show()
+```
 
 ---
 
@@ -88,6 +117,14 @@ Kita harus membelah data menjadi dua.
 - **$X$ (Fitur/Soal)**: Kondisi N, P, K, suhu, curah hujan, dll.
 - **$y$ (Target/Kunci Jawaban)**: Nama buahnya (Mangga, Pepaya, dll).
 
+```python
+# X berisi semua kolom sebagai fitur, KECUALI target
+X = data.drop('nama_buah', axis=1)
+
+# y hanya berisi kolom target ('nama_buah')
+y = data['nama_buah']
+```
+
 ### B. Menjinakkan Outlier (Metode IQR)
 Ingat si penyusup di tahap Box Plot tadi? Kita atasi pakai matematika sederhana: **Interquartile Range (IQR)**.
 1. Kita cari batas kuartil bawah ($Q1$) dan batas kuartil atas ($Q3$).
@@ -96,6 +133,21 @@ Ingat si penyusup di tahap Box Plot tadi? Kita atasi pakai matematika sederhana:
 4. Tentukan "Pagar Atas": $Q3 + (1.5 \times IQR)$
 
 Setiap angka curah hujan yang melompat melewati pagar atas, nggak kita buang, tapi kita **paksa turun** (capping) agar nilainya sama persis dengan tinggi pagar atas. Ini menyelamatkan jumlah data kita agar tidak berkurang.
+
+```python
+# Contoh menerapkan pembatasan nilai (capping) untuk menangani outlier
+for kolom in X.columns:
+    Q1 = X[kolom].quantile(0.25)
+    Q3 = X[kolom].quantile(0.75)
+    IQR = Q3 - Q1
+    
+    pagar_bawah = Q1 - (1.5 * IQR)
+    pagar_atas = Q3 + (1.5 * IQR)
+    
+    # Pangkas nilai yang melebihi batas
+    X[kolom] = np.where(X[kolom] > pagar_atas, pagar_atas, X[kolom])
+    X[kolom] = np.where(X[kolom] < pagar_bawah, pagar_bawah, X[kolom])
+```
 
 ### C. Standardisasi (Z-Score)
 Ini bagian yang sangat, sangat penting untuk algoritma KNN.
@@ -112,12 +164,35 @@ $$Z = \frac{X - \mu}{\sigma}$$
 
 Hasilnya? Semua kolom akan punya rata-rata 0. Adil, kan?
 
+```python
+# Menyiapkan 'timbangan' Z-Score
+scaler = StandardScaler()
+
+# Mengubah data asli X menjadi data yang skalanya adil (Z-Score)
+X_scaled = scaler.fit_transform(X)
+```
+
 ### D. Label Encoding
 Mesin cuma bisa baca angka, nggak bisa baca huruf teks. Jadi "Mangga", "Pisang", "Pepaya" kita ubah jadi angka 0, 1, 2, 3 pakai `LabelEncoder`.
+
+```python
+# Menyiapkan 'kamus' untuk mengubah teks menjadi angka
+label_encoder = LabelEncoder()
+
+# Mengubah target ('nama_buah') menjadi angka (0, 1, 2, 3)
+y_encoded = label_encoder.fit_transform(y)
+```
 
 ### E. Data Splitting (80:20)
 Kita pisah data jadi dua: **Data Latih (80%)** dan **Data Uji (20%)**.
 Ibarat anak sekolah, 80% soal dipakai buat latihan di kelas, 20% sisanya disembunyikan sama guru buat soal Ujian Nasional. Tujuannya biar kita tahu apakah mesinnya beneran pintar, atau cuma jago menghafal soal latihan.
+
+```python
+# Memecah data dengan proporsi Train 80% dan Test 20%
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+)
+```
 
 ---
 
@@ -151,6 +226,11 @@ knn.fit(X_train, y_train)
 
 Mesin sudah belajar, sekarang kita tes pakai Data Uji (20% tadi).
 
+```python
+# Meminta model menebak jawaban dari soal Ujian Nasional (X_test)
+y_pred = knn.predict(X_test)
+```
+
 ### A. Mengenal Confusion Matrix
 Confusion Matrix itu rapornya si mesin. Matriks ini blak-blakan ngasih tau di mana mesin ini pinter, dan di mana dia oon (suka tertukar).
 
@@ -162,6 +242,21 @@ Ada 4 komponen dasar dari tebakan mesin:
 
 Di grafik Heatmap Confusion Matrix, lihatlah kotak-kotak yang berbaris menyilang (diagonal). Itu adalah total tebakan yang **Benar (TP)**. Makin gede angkanya, makin bagus. Kotak-kotak di luar garis itu adalah kesalahan tebakan. Dari situ kita bisa tahu, "Wah, modelnya suka kebingungan bedain Pepaya sama Semangka nih!"
 
+```python
+# Membuat Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+
+# Menampilkan dengan visualisasi yang cantik (Heatmap)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=label_encoder.classes_, 
+            yticklabels=label_encoder.classes_)
+plt.xlabel('Tebakan Mesin (Predicted)')
+plt.ylabel('Kenyataan Asli (Actual)')
+plt.title('Confusion Matrix Tebakan KNN')
+plt.show()
+```
+
 ### B. Metrik Evaluasi: Rapor Angka
 1. **Accuracy (Akurasi)**: Dari 100 soal ujian, berapa yang dijawab benar? 
    $$\frac{TP + TN}{TP + TN + FP + FN}$$
@@ -170,6 +265,16 @@ Di grafik Heatmap Confusion Matrix, lihatlah kotak-kotak yang berbaris menyilang
 3. **Recall (Daya Ingat)**: Dari semua Mangga yang ada di dunia nyata, berapa banyak yang berhasil dikenali sama mesin (nggak ada yang lolos)?
    $$\frac{TP}{TP + FN}$$
 4. **F1-Score**: Nilai keseimbangan (rata-rata harmonik) antara Precision dan Recall. Kalau salah satu jelek, F1-Score bakal anjlok buat ngasih hukuman.
+
+```python
+# Melihat hasil rapor angka dengan metrik klasifikasi
+akurasi = accuracy_score(y_test, y_pred)
+print(f"Akurasi   : {akurasi * 100:.2f}%")
+
+# Menampilkan laporan komprehensif (Precision, Recall, F1-Score tiap buah)
+print("\nLaporan Lengkap (Classification Report):\n")
+print(classification_report(y_test, y_pred, target_names=label_encoder.classes_))
+```
 
 ---
 
@@ -197,6 +302,6 @@ Karena otak model ini sudah terbiasa dengan "makanan" berupa Z-Score. Kalau beso
 ---
 
 ### Selesai!
-Sekarang Anda sudah paham betul bagaimana K-Nearest Neighbors bekerja dari hulu ke hilir. Silakan kembali ke [Jupyter Notebook `crop_buah_model.ipynb`](../notebooks/crop_buah_model.ipynb) dan mainkan sendiri kodenya (klik **Run All**). 
+Sekarang Anda sudah paham bukan bagaimana K-Nearest Neighbors bekerja dari hulu ke hilir. Silakan kembali ke [Jupyter Notebook `crop_buah_model.ipynb`](../notebooks/crop_buah_model.ipynb) dan mainkan sendiri kodenya (klik **Run All**). 
 
 Jangan takut untuk bereksperimen, misalnya: Coba ubah nilai parameter $K$ di KNN menjadi 3 atau 10 (`KNeighborsClassifier(n_neighbors=3)`), lalu lihat apakah rapornya jadi makin bagus atau malah hancur? Selamat mencoba!
